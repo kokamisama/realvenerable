@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GIFs by @realvenerable</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #000;
+      --card: #0f0f0f;
+      --glow: #ff3df2;
+      --text: #fff;
+      --muted: #888;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Inter", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #111, #000);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header span {
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    header a {
+      color: var(--muted);
+      margin-left: 20px;
+      text-decoration: none;
+    }
+
+    header a:hover {
+      color: var(--glow);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      margin-top: 40px;
+    }
+
+    h1 span {
+      color: var(--glow);
+    }
+
+    p {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 60px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px;
+      padding: 0 32px 80px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 0 0 rgba(255, 61, 242, 0);
+      transform: scale(0.95);
+      opacity: 0;
+      animation: popIn 0.6s ease forwards;
+    }
+
+    .card:hover {
+      box-shadow: 0 0 40px rgba(255, 61, 242, 0.35);
+      transform: scale(1.03);
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    footer span {
+      color: var(--text);
+    }
+
+    @keyframes popIn {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <span>VENERABLE.GIFS</span>
+  <div>
+    <a href="https://instagram.com/realvenerable" target="_blank">Instagram</a>
+    <a href="https://giphy.com/realvenerable" target="_blank">Giphy</a>
+  </div>
+</header>
+
+<h1>GIFS BY <span>@realvenerable</span></h1>
+<p>Original animated creations · Updated via GitHub</p>
+
+<section class="grid" id="gifGrid"></section>
+
+<footer>
+  © <span>@realvenerable</span> — all GIFs handcrafted
+</footer>
+
+<script>
+  const GITHUB_USER = "YOUR_GITHUB_USERNAME";
+  const REPO_NAME = "YOUR_REPO_NAME";
+  const GIF_FOLDER = "gifs";
+
+  const grid = document.getElementById("gifGrid");
+
+  fetch(`https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${GIF_FOLDER}`)
+    .then(res => res.json())
+    .then(files => {
+      const gifs = files.filter(file =>
+        file.name.toLowerCase().endsWith(".gif")
+      );
+
+      gifs.forEach((file, i) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.animationDelay = `${i * 80}ms`;
+
+        const img = document.createElement("img");
+        img.src = file.download_url;
+        img.alt = file.name;
+
+        card.appendChild(img);
+        grid.appendChild(card);
+      });
+    })
+    .catch(err => {
+      console.error("Failed to load GIFs", err);
+      grid.innerHTML = "<p style='color:#888'>Could not load GIFs.</p>";
+    });
+</script>
+
+
+</body>
+</html>
