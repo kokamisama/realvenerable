@@ -136,37 +136,41 @@
 </footer>
 
 <script>
-  const GITHUB_USER = "YOUR_GITHUB_USERNAME";
-  const REPO_NAME = "YOUR_REPO_NAME";
-  const GIF_FOLDER = "gifs";
+  const GITHUB_USER = "realvenerable";   // 👈 change if needed
+  const REPO_NAME = "gif-site";          // 👈 your repo name
 
   const grid = document.getElementById("gifGrid");
 
-  fetch(`https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${GIF_FOLDER}`)
-    .then(res => res.json())
-    .then(files => {
-      const gifs = files.filter(file =>
-        file.name.toLowerCase().endsWith(".gif")
-      );
-
-      gifs.forEach((file, i) => {
+  fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/gifs.json`)
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to fetch gifs.json");
+      return res.json();
+    })
+    .then(gifs => {
+      gifs.forEach((gif, i) => {
         const card = document.createElement("div");
         card.className = "card";
         card.style.animationDelay = `${i * 80}ms`;
 
         const img = document.createElement("img");
-        img.src = file.download_url;
-        img.alt = file.name;
+        img.src = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/gifs/${gif}`;
+        img.alt = gif;
+        img.loading = "lazy";
 
         card.appendChild(img);
         grid.appendChild(card);
       });
     })
     .catch(err => {
-      console.error("Failed to load GIFs", err);
-      grid.innerHTML = "<p style='color:#888'>Could not load GIFs.</p>";
+      console.error(err);
+      grid.innerHTML = `
+        <p style="color:#888;text-align:center">
+          GIFs failed to load.<br>
+          Check repo name, branch, or gifs.json.
+        </p>`;
     });
 </script>
+
 
 
 </body>
